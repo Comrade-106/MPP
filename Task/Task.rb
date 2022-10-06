@@ -24,6 +24,10 @@ for s in string.split("")
     end
 end
 
+if !stack.empty?
+    res = false
+end
+
 if res
     puts "\"#{string}\" => True"
 else
