@@ -11,6 +11,7 @@ class Logger
   
     # Повсеместно использующаяся функциональность
     def LogMessage(msg)
+        
       puts "Message logged: \"#{msg}\" "
     end
 end
