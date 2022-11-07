@@ -96,8 +96,15 @@ class Convertor
             if isDigit(i)
                 stack.push(i.to_f)
             else
-                operand1 = stack.pop.to_f
-                operand2 = stack.pop.to_f
+                operand1 = 0
+                operand2 = 0
+                
+                if str == "cos" || str == "sin" || str == "tan" || str == "cot"
+                    operand1 = stack.pop.to_f
+                else
+                    operand1 = stack.pop.to_f
+                    operand2 = stack.pop.to_f
+                end
 
                 case i
                     when "+"
