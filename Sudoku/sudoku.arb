@@ -1,0 +1,119 @@
+class Sudoku
+    def solveSudoku(grid)
+        minRow = -1
+        minCol = -1
+        minValues = []
+        tempGrid = grid
+        while true do
+            minRow = -1
+            
+            for i in 0..8
+                for j in 0..8
+                    next if tempGrid[i][j] != 0 # Если ячейка заполнена, пропускаем ее
+
+                    possibleValues = getPossibleValues(i, j, tempGrid) # находим все возможные цифры для данной позиции
+                    possibleValueCount = possibleValues.size
+
+                    return nil if possibleValueCount == 0 # если таких вариантов нет, значит для судоку нет решения, возвращаем nil
+
+                    tempGrid[i][j] = possibleValues.first if possibleValueCount == 1 # если есть только одна возможная цифра, устанавливаем ее эту позицию
+
+                    if minRow < 0 || possibleValueCount < minValues.size # находим ячейку с минимальным количеством вариантов для подстановки
+                        minRow = i
+                        minCol = j
+                        minValues = possibleValues
+                    end
+                end
+            end
+
+            return tempGrid if minRow == -1 # судоку заполнено
+            
+            break if minValues.size > 1 # Если условие выполнилось, то во время прохода по всей сетке не было однозначных ячеек и необходимо использовать рекурсию
+        end
+        
+        for t in minValues # проверяем рекурсивно все варианты для ячейки
+            tempCopy = tempGrid
+            tempCopy[minRow][minCol] = t
+
+            tempCopy = solveSudoku(tempCopy)
+
+            return tempCopy if !tempCopy.nil?
+        end
+
+        return nil
+    end
+
+    def getPossibleValues(row, col, grid) 
+        values = []
+        for i in 1..9
+            values << i
+        end
+
+        values = values.difference(getRowValues(row, grid))
+        values = values.difference(getColValues(col, grid))
+        values = values.difference(getBlockValues(row, col, grid))
+
+        return values
+    end
+
+    def getRowValues(row, grid)
+        values = []
+        for i in 0..8
+            values << grid[row][i]
+        end
+
+        return values
+    end
+
+    def getColValues(col, grid) 
+        values = []
+        for i in 0..8
+            values << grid[i][col]
+        end
+
+        return values
+    end
+
+    def getBlockValues(row, col, grid) 
+        values = []
+        blockRowStart = 3 * (row / 3)
+        blockColStart = 3 * (col / 3)
+        for i in 0..2
+            for j in 0..2
+                values << grid[blockRowStart + i][blockColStart + j]
+            end
+        end
+
+        return values
+    end
+end
+
+def printSudoku(grid)
+    res = ""
+    for i in 0..8
+        for j in 0..8
+            res << grid[i][j].to_s + " "
+        end
+        res << "\n"
+    end
+
+    puts res + "\n\n"
+end
+
+
+sudoku = [[5,3,0,0,7,0,0,0,0],
+          [6,0,0,1,9,5,0,0,0],
+          [0,9,8,0,0,0,0,6,0],
+          [8,0,0,0,6,0,0,0,3],
+          [4,0,0,8,0,3,0,0,1],
+          [7,0,0,0,2,0,0,0,6],
+          [0,6,0,0,0,0,2,8,0],
+          [0,0,0,4,1,9,0,0,5],
+          [0,0,0,0,8,0,0,7,9]]
+
+printSudoku(sudoku)
+
+solver = Sudoku.new
+solution = solver.solveSudoku(sudoku)
+printSudoku(solution) if !solution.nil?
+puts "Нет решения" if solution.nil?
